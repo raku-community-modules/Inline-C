@@ -13,6 +13,7 @@ multi trait_mod:<is>(Routine $r, :$inline!) is export {
 
 	given $inline {
 		when 'C' { $r does Inline::C[$r, $inline, $code] }
+		default  { warn "Language '$inline' not supported by Inline module." }
 	}
 }
 

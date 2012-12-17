@@ -23,7 +23,7 @@ sub param_hash_for(Parameter $p, :$with-typeobj) {
 	my $type := $p.type();
 	nqp::bindkey($result, 'typeobj', $type) if $with-typeobj;
 	if $type ~~ Str {
-		my $enc := $p.?native_call_encoded() || 'utf8';
+		my $enc := $type.?native_call_encoded() || 'utf8';
 		nqp::bindkey($result, 'type', nqp::unbox_s(string_encoding_to_nci_type($enc)));
 		nqp::bindkey($result, 'free_str', nqp::unbox_i(1));
 	}
@@ -54,7 +54,7 @@ sub return_hash_for(Signature $s) {
 	my Mu $result := nqp::hash();
 	my $returns := $s.returns;
 	if $returns ~~ Str {
-		my $enc := &r.?native_call_encoded() || 'utf8';
+		my $enc := $returns.?native_call_encoded() || 'utf8';
 		nqp::bindkey($result, 'type', nqp::unbox_s(string_encoding_to_nci_type($enc)));
 		nqp::bindkey($result, 'free_str', nqp::unbox_i(0));
 	}

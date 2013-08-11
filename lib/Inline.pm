@@ -3,7 +3,7 @@ module Inline;
 
 use Inline::C;
 
-multi trait_mod:<is>(Routine $r, :$inline!) is export {
+multi trait_mod:<is>(Routine $r, :$inline!) is export(:DEFAULT, :traits) {
 	my @args;
 
 	# only positional arguments so far

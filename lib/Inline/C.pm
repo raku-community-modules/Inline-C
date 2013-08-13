@@ -1,9 +1,7 @@
 
 role Inline::C[Routine $r, Str $language, Str $code];
 
-use NativeCall :internals;
-
-my class native_callsite is repr('NativeCall') { }
+use NativeCall;
 
 has int $!setup;
 has $!code = "#ifdef WIN32
@@ -13,9 +11,8 @@ has $!code = "#ifdef WIN32
 #endif
 $code";
 has $!libname;
-has native_callsite $!call is box_target;
 
-method postcircumfix:<( )>($args) {
+method postcircumfix:<( )>(Mu \args) {
     unless $!setup {
         $!setup      = 1;
         my $basename = IO::Spec.catfile( $*TMPDIR, 'inline' );
@@ -31,18 +28,7 @@ method postcircumfix:<( )>($args) {
             shell($l_line);
         }
     }
-    my Mu $arg_info := param_list_for($r.signature);
-    my str $conv = self.?native_call_convention || '';
-    my $realname = 
-        !$!libname.DEFINITE   ?? "" !!
-        $!libname ~~ /\.\w+$/ ?? $!libname !!
-                                "$!libname$*VM<config><load_ext>";
-    nqp::buildnativecall(self,
-        nqp::unbox_s($realname),    # library name
-        nqp::unbox_s($r.name),      # symbol to call
-        nqp::unbox_s($conv),        # calling convention
-        $arg_info,
-        return_hash_for($r.signature));
-    nqp::nativecall(nqp::decont(map_return_type($r.returns)), self,
-        nqp::getattr(nqp::decont($args), Capture, '$!list'))
+    
+    &trait_mod:<is>($r, native => $!libname);
+    $r(|args);
 }

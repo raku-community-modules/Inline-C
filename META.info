@@ -1,7 +1,8 @@
 {
     "name" : "Inline",
-    "version" : "*",
+    "auth" : "github:FROGGS",
+    "version" : "1.0.0",
     "description" : "use C-code from within Perl",
-    "depends" : [ ],
+    "depends" : [ "NativeCall" ],
     "source-url" : "git://github.com/FROGGS/p6-Inline-C.git"
 }

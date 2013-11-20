@@ -1,6 +1,6 @@
 {
     "name" : "Inline",
-    "auth" : "github:FROGGS",
+    "author" : "github:FROGGS",
     "version" : "1.0.0",
     "description" : "use C-code from within Perl",
     "depends" : [ "NativeCall" ],

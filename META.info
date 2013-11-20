@@ -2,6 +2,6 @@
     "name" : "Inline",
     "version" : "*",
     "description" : "use C-code from within Perl",
-    "depends" : [ "File::Spec" ],
+    "depends" : [ ],
     "source-url" : "git://github.com/FROGGS/p6-Inline-C.git"
 }

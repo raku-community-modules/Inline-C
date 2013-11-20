@@ -20,9 +20,11 @@ method postcircumfix:<( )>(Mu \args) {
         $!libname    = $basename ~ 1000.rand while $!libname.IO.e;
         my $o        = $*VM<config><o>;
         my $so       = $*VM<config><load_ext>;
-        if my $CC = open( "$*VM<config><cc> -c $*VM<config><cc_shared> $*VM<config><cc_o_out>$!libname$o $*VM<config><ccflags> -xc -", :w, :p ) or warn $! {
-            $CC.print( $!code );
-            $CC.close;
+        
+        my $cmd = "$*VM<config><cc> -c $*VM<config><cc_shared> $*VM<config><cc_o_out>$!libname$o $*VM<config><ccflags> -xc -";
+        if my Mu $CC := nqp::open(nqp::unbox_s($cmd), nqp::unbox_s("wp")) or die $! {
+            nqp::printfh($CC, nqp::unbox_s($!code));
+            nqp::closefh($CC);
             my $l_line = "$*VM<config><ld> $*VM<config><ld_load_flags> $*VM<config><ldflags> " ~
                          "$*VM<config><libs> $*VM<config><ld_out>$!libname$so $!libname$o";
             shell($l_line);

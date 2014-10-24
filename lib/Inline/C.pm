@@ -13,14 +13,16 @@ $code";
 has $!libname;
 has $!dll;
 
+my @to-delete;
+
 method postcircumfix:<( )>(Mu \args) {
     unless $!setup {
         $!setup      = 1;
         my $basename = IO::Spec.catfile( $*TMPDIR, 'inline' );
-        $!libname    = $basename ~ "_" ~ $r.name;
-        $!libname    = $basename ~ 1000.rand.Int while $!libname.IO.e;
         my $cfg      = $*VM.config;
         my $o        = $cfg<obj> // $cfg<o>;
+        $!libname    = $basename ~ "_" ~ $r.name;
+        $!libname    = $basename ~ 1000.rand.Int while $!libname.IO.e || "$!libname$o".IO.e || "$!libname.c".IO.e;
         $!dll        = $cfg<dll> ?? $!libname.path.directory ~ '/' ~ $!libname.path.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
         my $ccout    = $cfg<ccout> // $cfg<cc_o_out>;
         my $ccshared = $cfg<ccshared> // $cfg<cc_shared>;
@@ -29,12 +31,25 @@ method postcircumfix:<( )>(Mu \args) {
         my $ldlibs   = $cfg<ldlibs> // $cfg<libs>;
         my $ldout    = $cfg<ldout> // $cfg<ld_out>;
 
+        @to-delete.push: $!libname, "$!libname$o", "$!libname.c", $!dll;
+
         "$!libname.c".IO.spurt: $!code;
 
         shell "$cfg<cc> -c $ccshared $ccout$!libname$o $cflags -xc $!libname.c";
         shell "$cfg<ld> $ldshared $cfg<ldflags> $ldlibs $ldout$!dll $!libname$o";
     }
-    
+
+    CATCH {
+        default {
+            try .IO.unlink for @to-delete;
+            .rethrow;
+        }
+    }
+
     &trait_mod:<is>($r, native => $!dll);
     $r(|args);
+}
+
+END {
+    try .IO.unlink for @to-delete
 }

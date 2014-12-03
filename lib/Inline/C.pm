@@ -18,12 +18,12 @@ my @to-delete;
 method postcircumfix:<( )>(Mu \args) {
     unless $!setup {
         $!setup      = 1;
-        my $basename = IO::Spec.catfile( $*TMPDIR, 'inline' );
+        my $basename = $*SPEC.catfile( $*TMPDIR, 'inline' );
         my $cfg      = $*VM.config;
         my $o        = $cfg<obj> // $cfg<o>;
         $!libname    = $basename ~ "_" ~ $r.name;
         $!libname    = $basename ~ 1000.rand.Int while $!libname.IO.e || "$!libname$o".IO.e || "$!libname.c".IO.e;
-        $!dll        = $cfg<dll> ?? $!libname.path.directory ~ '/' ~ $!libname.path.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
+        $!dll        = $cfg<dll> ?? $!libname.path.dirname ~ '/' ~ $!libname.path.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
         my $ccout    = $cfg<ccout> // $cfg<cc_o_out>;
         my $ccshared = $cfg<ccshared> // $cfg<cc_shared>;
         my $cflags   = $cfg<cflags> // $cfg<ccflags>;

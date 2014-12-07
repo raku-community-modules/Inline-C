@@ -23,7 +23,7 @@ method postcircumfix:<( )>(Mu \args) {
         my $o        = $cfg<obj> // $cfg<o>;
         $!libname    = $basename ~ "_" ~ $r.name;
         $!libname    = $basename ~ 1000.rand.Int while $!libname.IO.e || "$!libname$o".IO.e || "$!libname.c".IO.e;
-        $!dll        = $cfg<dll> ?? $!libname.path.dirname ~ '/' ~ $!libname.path.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
+        $!dll        = $cfg<dll> ?? $!libname.IO.dirname ~ '/' ~ $!libname.IO.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
         my $ccout    = $cfg<ccout> // $cfg<cc_o_out>;
         my $ccshared = $cfg<ccshared> // $cfg<cc_shared>;
         my $cflags   = $cfg<cflags> // $cfg<ccflags>;

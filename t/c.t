@@ -3,7 +3,7 @@ use lib 'lib';
 
 use Test;
 
-plan(1);
+plan 1;
 
 use soft;
 use Inline;
@@ -15,4 +15,4 @@ sub a_plus_b( int, int ) is inline('C') returns Int {'
 	}
 '}
 
-is a_plus_b( 7, 35 ), 42;
+is a_plus_b( 7, 35 ), 42, 'a_plus_b';

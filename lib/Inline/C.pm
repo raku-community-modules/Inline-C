@@ -15,7 +15,7 @@ has $!dll;
 
 my @to-delete;
 
-method postcircumfix:<( )>(Mu \args) {
+method postcircumfix:<( )>(|args) {
     unless $!setup {
         $!setup      = 1;
         my $basename = $*SPEC.catfile( $*TMPDIR, 'inline' );

@@ -7,7 +7,7 @@ multi trait_mod:<is>(Routine $r, :$inline!) is export(:DEFAULT, :traits) {
 	my @args;
 
 	# only positional arguments so far
-	@args.push( .type ) for $r.signature.params;
+	@args.push( nqp::create(.type) ) for $r.signature.params;
 
 	my $code = $r( |@args );
 
